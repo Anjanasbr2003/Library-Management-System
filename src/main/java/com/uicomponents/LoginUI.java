@@ -1,5 +1,7 @@
 package com.uicomponents;
 
+import com.dbconnection.dbOperations;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -9,20 +11,20 @@ public class LoginUI extends JFrame {
 
     private JPanel jpane;
     private JLabel uiimage;
-    private JTextField usernametextfield;
+    private JTextField userIdtextfield;
     private JTextField passwordtextfield;
     private JButton logInButton;
     private JLabel loginuitheading;
     private JLabel usernamelabel;
     private JLabel passwordlabel;
 
-    LoginUI(){
+  public  LoginUI(){
 
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setTitle("Login");
         frame.setResizable(false);
-        frame.setLocationRelativeTo(jpane);
+        frame.setLocationRelativeTo(null);
         frame.setSize(800,600);
         frame.add(jpane);
 
@@ -52,18 +54,40 @@ public class LoginUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 
-                String username = usernametextfield.getText();
+                String username = userIdtextfield.getText();
                 String password = passwordtextfield.getText();
+
+
+
+
+
                 if(username.equals("") || password.equals("")){
                     JOptionPane.showMessageDialog(null,"Please fill all the fields");
+                }else if(new dbOperations().authenticate(username,password)){
+                        String idprefix = username.substring(0,2);
+
+                        switch (idprefix){
+                            case "AD":
+                                new adminUi();
+                                frame.dispose();
+                                break;
+
+                            case "LB":
+                                new librarianui();
+                                frame.dispose();
+                                break;
+                            case "ME":
+                                frame.dispose();
+                                break;
+                        }
+                }else{
+                    JOptionPane.showMessageDialog(null,"Username and password do not match");
                 }
 
             }
         });
     }
 
-    static void main(String[] args) {
-        new LoginUI();
-    }
+
 
 }
