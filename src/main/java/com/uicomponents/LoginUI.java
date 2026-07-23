@@ -2,6 +2,8 @@ package com.uicomponents;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class LoginUI extends JFrame {
 
@@ -20,15 +22,15 @@ public class LoginUI extends JFrame {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setTitle("Login");
         frame.setResizable(false);
-        frame.setLocationRelativeTo(null);
+        frame.setLocationRelativeTo(jpane);
         frame.setSize(800,600);
         frame.add(jpane);
 
-        ImageIcon icon = new ImageIcon("src/main/resources/images.png");
+        ImageIcon icon = new ImageIcon("src/main/resources/icon.png");
         frame.setIconImage(icon.getImage());
 
-        ImageIcon icon2 = new ImageIcon("src/main/resources/images.png");
-        Image scaledimage = icon2.getImage().getScaledInstance(300,600,Image.SCALE_DEFAULT);
+        ImageIcon icon2 = new ImageIcon("src/main/resources/image.jpg");
+        Image scaledimage = icon2.getImage().getScaledInstance(300,600,Image.SCALE_SMOOTH);
         ImageIcon largeicon = new ImageIcon(scaledimage);
         uiimage.setIcon(largeicon);
 
@@ -46,8 +48,18 @@ public class LoginUI extends JFrame {
         frame.setVisible(true);
 
 
+        logInButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+                String username = usernametextfield.getText();
+                String password = passwordtextfield.getText();
+                if(username.equals("") || password.equals("")){
+                    JOptionPane.showMessageDialog(null,"Please fill all the fields");
+                }
 
-
+            }
+        });
     }
 
     static void main(String[] args) {
