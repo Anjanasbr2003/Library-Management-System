@@ -1,6 +1,7 @@
 package com.uicomponents;
 
-import com.dbconnection.dbOperations;
+import com.dbconnection.DbOperations;
+import com.modules.User;
 
 import javax.swing.*;
 import java.awt.*;
@@ -53,30 +54,32 @@ public class LoginUI extends JFrame {
         logInButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                
-                String username = userIdtextfield.getText();
-                String password = passwordtextfield.getText();
+
+                User u1 = new User();
+                u1.setUserid(userIdtextfield.getText());
+                u1.setPassword(passwordtextfield.getText());
 
 
 
 
 
-                if(username.equals("") || password.equals("")){
+                if(u1.getUserid().equals("") || u1.getPassword().equals("")){
                     JOptionPane.showMessageDialog(null,"Please fill all the fields");
-                }else if(new dbOperations().authenticate(username,password)){
-                        String idprefix = username.substring(0,2);
+                }else if(new DbOperations().authenticate(u1.getUserid(),u1.getPassword())){
+                        String idprefix = u1.getUserid().substring(0,2);
 
                         switch (idprefix){
                             case "AD":
-                                new adminUi();
+                                new AdminUi();
                                 frame.dispose();
                                 break;
 
                             case "LB":
-                                new librarianui();
+                                new Librarianui();
                                 frame.dispose();
                                 break;
                             case "ME":
+                                new Userui();
                                 frame.dispose();
                                 break;
                         }

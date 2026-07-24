@@ -5,10 +5,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class dbOperations {
+public class DbOperations {
 
 
-    dbconnection dbconnection = new dbconnection();
+    Dbconnection dbconnection = new Dbconnection();
 
     Connection conn = dbconnection.dbconnection();
 
