@@ -9,7 +9,7 @@ public class Dbconnection {
 
 
 
-    public Connection dbconnection(){
+    public static Connection dbconnection(){
 
         Connection con = null;
         String url = "jdbc:mysql://localhost:3306/lmsys";

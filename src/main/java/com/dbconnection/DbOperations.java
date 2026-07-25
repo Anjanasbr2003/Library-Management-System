@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static com.dbconnection.Dbconnection.dbconnection;
+
 public class DbOperations {
 
 
@@ -44,5 +46,47 @@ public class DbOperations {
         return false;
     }
 
+
+    public boolean userExistionCheckAndDeletion(String userid){
+
+        Connection co=dbconnection();
+
+        if(conn==null){
+            System.out.println("Connection is null");
+            return false;
+        }
+
+
+        try {
+            String sql="DELETE FROM users WHERE U_id=?";
+            PreparedStatement ps=co.prepareStatement(sql);
+
+            String sql2="SELECT U_id FROM users WHERE U_id=?";
+            PreparedStatement ps2=co.prepareStatement(sql2);
+
+
+
+            ps2.setString(1,userid);
+            ps.setString(1,userid);
+
+            ResultSet rs2=ps2.executeQuery();
+
+            while(rs2.next()){
+                if(rs2.getString("U_id").equals(userid)){
+
+                   ps.executeUpdate();
+                    return true;
+                }
+            }
+
+
+
+
+
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return  false;
+    }
 
 }
