@@ -5,8 +5,7 @@ import com.modules.User;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 
 public class LoginUI extends JFrame {
 
@@ -70,7 +69,7 @@ public class LoginUI extends JFrame {
 
                         switch (idprefix){
                             case "AD":
-                                new AdminUi();
+                                new AdminUi().setAdminId(u1.getUserid());
                                 frame.dispose();
                                 break;
 
@@ -85,11 +84,65 @@ public class LoginUI extends JFrame {
                         }
                 }else{
                     JOptionPane.showMessageDialog(null,"Username and password do not match");
+                    userIdtextfield.setText("");
+                    passwordtextfield.setText("");
                 }
 
             }
         });
-    }
+      userIdtextfield.addFocusListener(new FocusAdapter() {
+          @Override
+          public void focusGained(FocusEvent e) {
+              super.focusGained(e);
+              userIdtextfield.setBorder(BorderFactory.createLineBorder(Color.black));
+              userIdtextfield.setBackground(Color.lightGray);
+              userIdtextfield.setForeground(Color.black);
+
+          }
+          @Override
+          public void focusLost(FocusEvent e) {
+              super.focusLost(e);
+              userIdtextfield.setBorder(BorderFactory.createLineBorder(Color.black));
+              userIdtextfield.setBackground(Color.white);
+              userIdtextfield.setForeground(Color.black);
+          }
+      });
+      passwordtextfield.addFocusListener(new FocusAdapter() {
+          @Override
+          public void focusGained(FocusEvent e) {
+              super.focusGained(e);
+              passwordtextfield.setBorder(BorderFactory.createLineBorder(Color.black));
+              passwordtextfield.setBackground(Color.lightGray);
+              passwordtextfield.setForeground(Color.black);
+          }
+          @Override
+          public void focusLost(FocusEvent e) {
+              super.focusLost(e);
+              passwordtextfield.setBorder(BorderFactory.createLineBorder(Color.black));
+              passwordtextfield.setBackground(Color.white);
+              passwordtextfield.setForeground(Color.black);
+
+          }
+      });
+
+
+      logInButton.addMouseListener(new MouseAdapter() {
+          @Override
+          public void mousePressed(MouseEvent e) {
+              super.mousePressed(e);
+              logInButton.setBackground(Color.black);
+              logInButton.setForeground(Color.white);
+          }
+      });
+      logInButton.addMouseListener(new MouseAdapter() {
+          @Override
+          public void mouseReleased(MouseEvent e) {
+              super.mouseReleased(e);
+              logInButton.setBackground(Color.white);
+              logInButton.setForeground(Color.black);
+          }
+      });
+  }
 
 
 
