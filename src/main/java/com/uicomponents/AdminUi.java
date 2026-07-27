@@ -6,6 +6,8 @@ import com.modules.User;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -135,6 +137,42 @@ public class AdminUi extends JFrame {
                     JOptionPane.showMessageDialog(frame,"User Not Found","Error",JOptionPane.ERROR_MESSAGE);
                 }
 
+
+            }
+        });
+        AdduserId.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                super.focusLost(e);
+                String prefix = null;
+
+
+                try {
+                    prefix = AdduserId.getText().substring(0,2);
+                } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                }
+
+
+                try {
+                    switch(prefix){
+                        case "AD":
+                            Addusertypecombo.setSelectedIndex(0);
+                            break;
+                        case "LB":
+                            Addusertypecombo.setSelectedIndex(1);
+                            break;
+                        case "ME":
+                            Addusertypecombo.setSelectedIndex(2);
+                            break;
+                        default:
+
+                    }
+
+
+                } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                }
 
             }
         });
