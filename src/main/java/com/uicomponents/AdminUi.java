@@ -10,7 +10,6 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static com.dbconnection.Dbconnection.dbconnection;
@@ -35,6 +34,15 @@ public class AdminUi extends JFrame {
     private JButton addUserButton;
     private JTextField deleteuserid;
     private JButton deleteUserButton;
+    private JTextField textField1;
+    private JTextField textField2;
+    private JTextField textField3;
+    private JPasswordField passwordField1;
+    private JTextField textField4;
+    private JPasswordField passwordField2;
+    private JTextField textField5;
+    private JButton UPDATEButton;
+    private JTextField textField6;
 
     AdminUi() {
 
@@ -48,6 +56,10 @@ public class AdminUi extends JFrame {
 
         frame.setVisible(true);
         frame.setTitle("Admin UI");
+
+        ImageIcon icon = new ImageIcon("src/main/resources/icon.png");
+        frame.setIconImage(icon.getImage());
+
 
         Addusertypecombo.addItem("admin");
         Addusertypecombo.addItem("librarian");
@@ -184,7 +196,5 @@ public class AdminUi extends JFrame {
         this.adminId.setText(tempadminId);
     }
 
-    static void main(String[] args) {
-        new AdminUi().setVisible(true);
-    }
+
 }
