@@ -6,9 +6,10 @@ import com.modules.User;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static com.dbconnection.Dbconnection.dbconnection;
@@ -33,6 +34,15 @@ public class AdminUi extends JFrame {
     private JButton addUserButton;
     private JTextField deleteuserid;
     private JButton deleteUserButton;
+    private JTextField textField1;
+    private JTextField textField2;
+    private JTextField textField3;
+    private JPasswordField passwordField1;
+    private JTextField textField4;
+    private JPasswordField passwordField2;
+    private JTextField textField5;
+    private JButton UPDATEButton;
+    private JTextField textField6;
 
     AdminUi() {
 
@@ -46,6 +56,10 @@ public class AdminUi extends JFrame {
 
         frame.setVisible(true);
         frame.setTitle("Admin UI");
+
+        ImageIcon icon = new ImageIcon("src/main/resources/icon.png");
+        frame.setIconImage(icon.getImage());
+
 
         Addusertypecombo.addItem("admin");
         Addusertypecombo.addItem("librarian");
@@ -138,6 +152,42 @@ public class AdminUi extends JFrame {
 
             }
         });
+        AdduserId.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                super.focusLost(e);
+                String prefix = null;
+
+
+                try {
+                    prefix = AdduserId.getText().substring(0,2);
+                } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                }
+
+
+                try {
+                    switch(prefix){
+                        case "AD":
+                            Addusertypecombo.setSelectedIndex(0);
+                            break;
+                        case "LB":
+                            Addusertypecombo.setSelectedIndex(1);
+                            break;
+                        case "ME":
+                            Addusertypecombo.setSelectedIndex(2);
+                            break;
+                        default:
+
+                    }
+
+
+                } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                }
+
+            }
+        });
     }
 
 
@@ -146,7 +196,5 @@ public class AdminUi extends JFrame {
         this.adminId.setText(tempadminId);
     }
 
-    static void main(String[] args) {
-        new AdminUi().setVisible(true);
-    }
+
 }
