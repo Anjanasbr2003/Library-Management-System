@@ -12,7 +12,7 @@ public class LoginUI extends JFrame {
     private JPanel jpane;
     private JLabel uiimage;
     private JTextField userIdtextfield;
-    private JTextField passwordtextfield;
+    private JPasswordField passwordtextfield;
     private JButton logInButton;
     private JLabel loginuitheading;
     private JLabel usernamelabel;

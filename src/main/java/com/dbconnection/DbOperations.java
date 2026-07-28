@@ -89,4 +89,26 @@ public class DbOperations {
         return  false;
     }
 
+    public boolean userIdCheck(String userid){
+        Connection co=dbconnection();
+        if(conn==null){
+            System.out.println("Connection is null");
+        }
+
+        try {
+            String sql="SELECT U_id FROM users";
+            PreparedStatement ps = co.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                if(rs.getString("U_id").equals(userid)){
+                    return true;
+                }
+            }
+
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+
 }
