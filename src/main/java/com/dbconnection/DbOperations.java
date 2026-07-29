@@ -89,6 +89,7 @@ public class DbOperations {
         return  false;
     }
 
+    //Check a user id and return true is its in the database
     public boolean userIdCheck(String userid){
         Connection co=dbconnection();
         if(conn==null){
@@ -106,6 +107,27 @@ public class DbOperations {
             }
 
         }catch (SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean bookCheck(String bookid){
+        Connection co=dbconnection();
+        if(conn==null){
+            System.out.println("Connection is null");
+        }
+        try {
+            String sql="SELECT B_id FROM book WHERE B_id=?";
+            PreparedStatement ps = co.prepareStatement(sql);
+            ps.setString(1,bookid);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                if(rs.getString("B_id").equals(bookid)){
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return false;
