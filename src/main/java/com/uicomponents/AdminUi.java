@@ -4,9 +4,11 @@ import com.dbconnection.DbOperations;
 import com.modules.User;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static com.dbconnection.Dbconnection.dbconnection;
@@ -41,8 +43,17 @@ public class AdminUi extends JFrame {
     private JComboBox NewUpdateCombo;
     private JTextField Newpasswordfield;
     private JTextField Newemailaddress;
-    private JTextField textField1;
-    private JTable userdetailtable;
+    private JTextField FinduserTextfield;
+    private JButton Finduserbtn;
+    private JTable FindUserTable;
+    private JScrollPane jscrollpane;
+    private JTable AlluserDetailsTable;
+    private JButton showDataButton;
+    private JButton showButton;
+    private JTable AllbooksTable;
+    private JTextField SearchBookID;
+    private JButton SearchBookButton;
+    private JTable SelectedBookTable;
 
     AdminUi() {
 
@@ -69,7 +80,6 @@ public class AdminUi extends JFrame {
         NewUpdateCombo.addItem("librarian");
         NewUpdateCombo.addItem("member");
         NewUpdateCombo.setEditable(false);
-
 
 
 
@@ -449,7 +459,112 @@ public class AdminUi extends JFrame {
                 }
             }
         });
+        DefaultTableModel model = (DefaultTableModel) FindUserTable.getModel();
+        model.setColumnIdentifiers(new Object[]{"User ID","Name","Type","Phone Number","Email","Address"});
+
+        Finduserbtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(!(new DbOperations().userIdCheck(FinduserTextfield.getText()))){
+                    JOptionPane.showMessageDialog(frame,"User Id Not Exist","Error",JOptionPane.ERROR_MESSAGE);
+                }else{
+                    model.setRowCount(0);
+                    Connection co=dbconnection();
+
+                    try {
+                        String sql = "SELECT * FROM users WHERE U_id=?";
+                        PreparedStatement ps = co.prepareStatement(sql);
+                        ps.setString(1,FinduserTextfield.getText());
+                        ResultSet rs = ps.executeQuery();
+
+                        while(rs.next()){
+                            model.addRow(new Object[]{rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(5),rs.getString(6),rs.getString(7)});
+                            System.out.println("Executed");
+                        }
+
+
+
+                    } catch (SQLException ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                }
+            }
+        });
+
+
+        showDataButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DefaultTableModel model2  = (DefaultTableModel) AlluserDetailsTable.getModel();
+                model2.setColumnIdentifiers(new Object[]{"User ID","Name","Type","Phone Number","Email","Address"});
+
+                Connection con =dbconnection();
+                model2.setRowCount(0);
+
+                String sql = "SELECT * FROM users";
+                try {
+                    PreparedStatement ps = con.prepareStatement(sql);
+                    ResultSet rs = ps.executeQuery();
+                    while(rs.next()){
+                        model2.addRow(new Object[]{rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(5),rs.getString(6),rs.getString(7)});
+
+                    }
+                } catch (SQLException ex) {
+                    System.out.println(ex.getMessage());
+                }
+            }
+        });
+
+
+        showButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DefaultTableModel model3  = (DefaultTableModel) AllbooksTable.getModel();
+                model3.setColumnIdentifiers(new Object[]{"Book ID","Name","Author","ISBN","Shelf Number","Count"});
+                model3.setRowCount(0);
+                Connection con =dbconnection();
+                String sql = "SELECT * FROM book";
+                try {
+                    PreparedStatement ps = con.prepareStatement(sql);
+                    ResultSet rs = ps.executeQuery();
+                    while(rs.next()){
+                        model3.addRow(new Object[]{rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4),rs.getString(5),rs.getString(6)});
+                    }
+                } catch (SQLException ex) {
+                    System.out.println(ex.getMessage());
+                }
+
+            }
+        });
+        SearchBookButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DefaultTableModel model4  = (DefaultTableModel) SelectedBookTable.getModel();
+                model4.setColumnIdentifiers(new Object[]{"Book ID","Name","Author","ISBN","Shelf Number","Count"});
+
+                if(!(new DbOperations().bookCheck(SearchBookID.getText()))){
+                    JOptionPane.showMessageDialog(frame,"Book Id Not Exist","Error",JOptionPane.ERROR_MESSAGE);
+                }else{
+                    String sql = "SELECT * FROM book where B_ID=?";
+                    Connection con =dbconnection();
+                    model4.setRowCount(0);
+                    try {
+                        PreparedStatement ps = con.prepareStatement(sql);
+                        ps.setString(1,SearchBookID.getText());
+                        ResultSet rs = ps.executeQuery();
+                        while(rs.next()){
+                            model4.addRow(new Object[]{rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4),rs.getString(5),rs.getString(6)});
+
+                        }
+                    } catch (SQLException ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                }
+            }
+        });
     }
+
+
 
 
     public void setAdminId(String adminId) {
