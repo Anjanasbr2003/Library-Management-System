@@ -118,9 +118,8 @@ public class DbOperations {
             System.out.println("Connection is null");
         }
         try {
-            String sql="SELECT B_id FROM book WHERE B_id=?";
+            String sql="SELECT B_id FROM book";
             PreparedStatement ps = co.prepareStatement(sql);
-            ps.setString(1,bookid);
             ResultSet rs = ps.executeQuery();
             while(rs.next()){
                 if(rs.getString("B_id").equals(bookid)){
@@ -132,5 +131,29 @@ public class DbOperations {
         }
         return false;
     }
+
+
+    public static boolean isbnCheck(String bookid){
+        Connection co=dbconnection();
+
+        String sql = "SELECT isbn FROM book";
+        try {
+            PreparedStatement ps = co.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()){
+                if(rs.getString("isbn").equals(bookid)){
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return false;
+
+    }
+
+
 
 }

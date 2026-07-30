@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static com.dbconnection.DbOperations.isbnCheck;
 import static com.dbconnection.Dbconnection.dbconnection;
 import static com.modules.Emailcheck.isValidEmail;
 
@@ -54,6 +55,26 @@ public class AdminUi extends JFrame {
     private JTextField SearchBookID;
     private JButton SearchBookButton;
     private JTable SelectedBookTable;
+    private JTextField NewBookId;
+    private JTextField NewAuthor;
+    private JTextField NewBookName;
+    private JTextField NewIsbn;
+    private JTextField NewBookCount;
+    private JTextField NewShelfNumber;
+    private JButton addBookButton;
+    private JTextField DeleteBookTextField;
+    private JButton deleteBookButton;
+    private JTextField ToBeUpdatedBookID;
+    private JTextField UpdateBookId;
+    private JTextField UpdateBookName;
+    private JTextField UpdateBookAthor;
+    private JTextField UpdateBookIsbn;
+    private JTextField UpdateShelfNo;
+    private JButton updateBookButton;
+    private JTextField UpdateBookCount;
+    private JButton checkButton;
+    private JTable ReservationTable;
+    private JButton viewAllReservationsButton;
 
     AdminUi() {
 
@@ -364,7 +385,7 @@ public class AdminUi extends JFrame {
                             JOptionPane.showMessageDialog(frame,"<html><body style='color:red'>User Id Must Contain Prefix 'AD' or 'LB' or 'ME' <br>Example: ADxxx / LBxxx / MExxx<br></body></html>"  ,"Error",JOptionPane.ERROR_MESSAGE);
 
                         }else if (new DbOperations().userIdCheck(NewUid.getText())){
-                            JOptionPane.showMessageDialog(frame,"User ID Already Exist","Error",JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(frame,"Changed Data of "+UpdateUid.getText(),"Information",JOptionPane.INFORMATION_MESSAGE);
                         }else if(!(new DbOperations().userIdCheck(NewUid.getText()))){
                             String sql ="UPDATE users SET U_id=? WHERE U_id=?";
                             try {
@@ -446,14 +467,36 @@ public class AdminUi extends JFrame {
                 try {
                     pre = UpdateUid.getText().substring(0,2);
 
+                    if(!(new DbOperations().userIdCheck(UpdateUid.getText()))){
+                        JOptionPane.showMessageDialog(frame,"User Id Not Exist","Error",JOptionPane.ERROR_MESSAGE);
 
-                    if(pre.equals("AD")){
-                        NewUpdateCombo.setSelectedIndex(0);
-                    }else if(pre.equals("LB")){
-                        NewUpdateCombo.setSelectedIndex(1);
-                    }else if(pre.equals("ME")){
-                        NewUpdateCombo.setSelectedIndex(2);
+                    }else{
+                        if(new DbOperations().userIdCheck(UpdateUid.getText())){
+                            String sql ="SELECT * FROM users WHERE U_id=?";
+                            PreparedStatement ps = dbconnection().prepareStatement(sql);
+                            ps.setString(1,UpdateUid.getText());
+                            ResultSet rs = ps.executeQuery();
+                            while(rs.next()){
+                                NewUid.setText(rs.getString("U_id"));
+                                Newname.setText(rs.getString("U_name"));
+                                Newpasswordfield.setText(rs.getString("U_password"));
+                                Newphonenumber.setText(rs.getString("U_phone"));
+                                Newemailaddress.setText(rs.getString("U_email"));
+                                Newaddress.setText(rs.getString("U_address"));
+                            }
+                        }
+
+
+                        if(pre.equals("AD")){
+                            NewUpdateCombo.setSelectedIndex(0);
+                        }else if(pre.equals("LB")){
+                            NewUpdateCombo.setSelectedIndex(1);
+                        }else if(pre.equals("ME")){
+                            NewUpdateCombo.setSelectedIndex(2);
+                        }
                     }
+
+
                 } catch (Exception ex) {
                     System.out.println(ex.getMessage());
                 }
@@ -559,6 +602,260 @@ public class AdminUi extends JFrame {
                     } catch (SQLException ex) {
                         System.out.println(ex.getMessage());
                     }
+                }
+            }
+        });
+        addBookButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                if(NewBookId.getText().isEmpty()){
+                    JOptionPane.showMessageDialog(frame,"Book ID Empty","Error",JOptionPane.ERROR_MESSAGE);
+                }else if(NewBookId.getText().charAt(0) != 'B'){
+                    JOptionPane.showMessageDialog(frame,"Book Name Must Start With Bxxx In this Order","Error",JOptionPane.ERROR_MESSAGE);
+                }else if(new DbOperations().bookCheck(NewBookId.getText())){
+                    JOptionPane.showMessageDialog(frame,"Book ID Already Exist","Error",JOptionPane.ERROR_MESSAGE);
+                }else if(NewBookName.getText().isEmpty()){
+                    JOptionPane.showMessageDialog(frame,"Book Name Empty","Error",JOptionPane.ERROR_MESSAGE);
+                }else if(NewBookName.getText().length()>100){
+                    JOptionPane.showMessageDialog(frame,"Book Name Too Long","Error",JOptionPane.ERROR_MESSAGE);
+                }else if(NewAuthor.getText().isEmpty()){
+                    JOptionPane.showMessageDialog(frame,"Book Author Empty","Error",JOptionPane.ERROR_MESSAGE);
+                }else if(NewAuthor.getText().length()>50){
+                    JOptionPane.showMessageDialog(frame,"Book Author Too Long","Error",JOptionPane.ERROR_MESSAGE);
+                }else if(NewIsbn.getText().isEmpty()){
+                    JOptionPane.showMessageDialog(frame,"Book ISBN Empty","Error",JOptionPane.ERROR_MESSAGE);
+                }else if(isbnCheck(NewIsbn.getText())){
+                    JOptionPane.showMessageDialog(frame,"Book ISBN Already Exist","Error",JOptionPane.ERROR_MESSAGE);
+                }
+                else if(NewIsbn.getText().length()>13||NewIsbn.getText().length()<13){
+                    JOptionPane.showMessageDialog(frame,"Book ISBN Contains 13 Digits","Error",JOptionPane.ERROR_MESSAGE);
+                }else if(NewShelfNumber.getText().isEmpty()){
+                    JOptionPane.showMessageDialog(frame,"Book Shelf Number Empty","Error",JOptionPane.ERROR_MESSAGE);
+                }else if(NewBookCount.getText().isEmpty()){
+                    JOptionPane.showMessageDialog(frame,"Book Count Empty","Error",JOptionPane.ERROR_MESSAGE);
+                }else{
+                    Connection con =dbconnection();
+                    String sql = "INSERT INTO book VALUES(?,?,?,?,?,?)";
+                    try {
+                        PreparedStatement ps = con.prepareStatement(sql);
+                        ps.setString(1,NewBookId.getText());
+                        ps.setString(2,NewBookName.getText());
+                        ps.setString(3,NewAuthor.getText());
+                        ps.setString(4,NewIsbn.getText());
+                        ps.setString(5,NewShelfNumber.getText());
+                        ps.setString(6,NewBookCount.getText());
+                        int affectedrow =  ps.executeUpdate();
+
+                        if(affectedrow>0){
+                            JOptionPane.showMessageDialog(frame,"Book Inserted Successfully","Success",JOptionPane.INFORMATION_MESSAGE);
+                            NewBookId.setText("");
+                            NewBookName.setText("");
+                            NewAuthor.setText("");
+                            NewIsbn.setText("");
+                            NewShelfNumber.setText("");
+                            NewBookCount.setText("");
+                        }else{
+                            JOptionPane.showMessageDialog(frame,"Book Inserted Failed","Error",JOptionPane.ERROR_MESSAGE);
+                        }
+
+                    } catch (SQLException ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                }
+
+            }
+        });
+        deleteBookButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                if(new DbOperations().bookCheck(DeleteBookTextField.getText())){
+                    Connection con = dbconnection();
+                    String sql = "DELETE FROM book WHERE B_ID=?";
+                    try {
+                        PreparedStatement ps = con.prepareStatement(sql);
+                        ps.setString(1,DeleteBookTextField.getText());
+                        int affectedrow = ps.executeUpdate();
+                        if(affectedrow>0){
+                            JOptionPane.showMessageDialog(frame,"Book Deleted Successfully","Success",JOptionPane.INFORMATION_MESSAGE);
+                            DeleteBookTextField.setText("");
+                        }else{
+                            JOptionPane.showMessageDialog(frame,"Book Deleted Failed","Error",JOptionPane.ERROR_MESSAGE);
+                        }
+                    } catch (SQLException ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                }else{
+                    JOptionPane.showMessageDialog(frame,"Book Id Not Exist","Error",JOptionPane.ERROR_MESSAGE);
+                }
+
+
+            }
+        });
+
+
+        checkButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(ToBeUpdatedBookID.getText().isEmpty()){
+                    JOptionPane.showMessageDialog(frame,"Book ID Empty","Error",JOptionPane.ERROR_MESSAGE);
+                }
+                else if (!(new DbOperations().bookCheck(ToBeUpdatedBookID.getText()))) {
+                    JOptionPane.showMessageDialog(frame, "Book ID Not Exist", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    String sql = "SELECT * FROM book WHERE B_ID=?";
+                    try {
+                        PreparedStatement ps = dbconnection().prepareStatement(sql);
+                        ps.setString(1, ToBeUpdatedBookID.getText());
+                        ResultSet rs = ps.executeQuery();
+                        while (rs.next()) {
+
+                            UpdateBookName.setText(rs.getString("B_Name"));
+                            UpdateBookAthor.setText(rs.getString("Author"));
+                            UpdateBookIsbn.setText(rs.getString("isbn"));
+                            UpdateShelfNo.setText(String.valueOf(rs.getInt("Shelf_no")));
+                            UpdateBookCount.setText(String.valueOf(rs.getInt("count")));
+
+                        }
+                    } catch (SQLException ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                }
+            }
+        });
+        updateBookButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                boolean shelfNumberCheck = true;
+                boolean countCheck = true;
+                boolean IsbnCheck = true;
+                boolean Authorcheck=true;
+                boolean nameCheck=true;
+
+                //Shelf Number Update
+                if(!(UpdateShelfNo.getText().isEmpty())){
+                    String sql = "UPDATE book SET shelf_no=? WHERE B_ID=?";
+                    try {
+                        PreparedStatement ps = dbconnection().prepareStatement(sql);
+                        ps.setInt(1, Integer.parseInt(UpdateShelfNo.getText()));
+                        ps.setString(2, ToBeUpdatedBookID.getText());
+                        int affectedrow = ps.executeUpdate();
+                        if(affectedrow>0){
+                            shelfNumberCheck = true;
+                        }else{
+                            shelfNumberCheck = false;
+                        }
+                    } catch (SQLException ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                }
+
+                //Book Count Update
+                if(!(UpdateBookCount.getText().isEmpty())){
+                    String sql = "UPDATE book SET count=? WHERE B_ID=?";
+                    try {
+                        PreparedStatement ps = dbconnection().prepareStatement(sql);
+                        ps.setInt(1, Integer.parseInt(UpdateBookCount.getText()));
+                        ps.setString(2, ToBeUpdatedBookID.getText());
+                        int affectedrow = ps.executeUpdate();
+                        if(affectedrow>0){
+                            countCheck = true;
+                        }else{
+                            countCheck = false;
+                        }
+                    } catch (SQLException ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                }
+
+                //ISBN Check and Updtae
+                if(!(UpdateBookIsbn.getText().isEmpty())){
+                    if(DbOperations.isbnCheck(UpdateBookIsbn.getText())){
+                        JOptionPane.showMessageDialog(frame,"Book ISBN Already Exist","Error",JOptionPane.ERROR_MESSAGE);
+                    }else{
+                        String sql = "UPDATE book SET isbn=? WHERE B_ID=?";
+                        try {
+                            PreparedStatement ps = dbconnection().prepareStatement(sql);
+                            ps.setString(1, UpdateBookIsbn.getText());
+                            ps.setString(2, ToBeUpdatedBookID.getText());
+                            int affectedrow = ps.executeUpdate();
+                            if(affectedrow>0){
+                                IsbnCheck = true;
+                            }else{
+                                IsbnCheck = false;
+                            }
+                        } catch (SQLException ex) {
+                            System.out.println(ex.getMessage());
+                        }
+                    }
+                }
+
+                //Author Update
+                if(!(UpdateBookAthor.getText().isEmpty())){
+                    String sql = "UPDATE book SET Author=? WHERE B_ID=?";
+                    try {
+                        PreparedStatement ps = dbconnection().prepareStatement(sql);
+                        ps.setString(1, UpdateBookAthor.getText());
+                        ps.setString(2, ToBeUpdatedBookID.getText());
+                        int affectedrow = ps.executeUpdate();
+                        if(affectedrow>0){
+                            Authorcheck=true;
+                        }else{
+                            Authorcheck=false;
+                        }
+                    } catch (SQLException ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                }
+                //Book Name Update
+                if(!(UpdateBookName.getText().isEmpty())){
+                    String sql = "UPDATE book SET B_name=? WHERE B_ID=?";
+                    try {
+                        PreparedStatement ps=dbconnection().prepareStatement(sql);
+                        ps.setString(1, UpdateBookName.getText());
+                        ps.setString(2, ToBeUpdatedBookID.getText());
+                        int affectedrow = ps.executeUpdate();
+                        if(affectedrow>0){
+                            nameCheck=true;
+                        }else{
+                            nameCheck=false;
+                        }
+                    } catch (SQLException ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                }
+                if(nameCheck && Authorcheck && IsbnCheck && countCheck && shelfNumberCheck){
+                    JOptionPane.showMessageDialog(frame,"Book Updated","Success",JOptionPane.INFORMATION_MESSAGE);
+                    UpdateBookName.setText("");
+                    UpdateBookAthor.setText("");
+                    UpdateBookIsbn.setText("");
+                    UpdateShelfNo.setText("");
+                    UpdateBookCount.setText("");
+                }else{
+                    JOptionPane.showMessageDialog(frame,"Book Updated Failed","Error",JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        viewAllReservationsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DefaultTableModel model = (DefaultTableModel) ReservationTable.getModel();
+                model.setRowCount(0);
+
+                model.setColumnIdentifiers(new Object[]{"Reservation ID","User ID","User Name","Book ID","Book Name"});
+
+                String sql = "SELECT r.R_Id,u.U_id,U.U_name,b.B_id,b.B_name FROM reservation r INNER JOIN users u ON r.U_id=u.U_id INNER JOIN book b ON b.B_id=r.B_id;\n";
+
+                try {
+                    PreparedStatement ps = dbconnection().prepareStatement(sql);
+                    ResultSet rs = ps.executeQuery();
+                    while (rs.next()) {
+                        model.addRow(new Object[]{rs.getString("R_id"),rs.getString("U_id"),rs.getString("U_name"),rs.getString("B_id"),rs.getString("B_name")});
+                    }
+                } catch (SQLException ex) {
+                    System.out.println(ex.getMessage());
                 }
             }
         });
