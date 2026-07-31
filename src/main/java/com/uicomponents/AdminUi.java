@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static com.dbconnection.DbOperations.ReservationCheck;
 import static com.dbconnection.DbOperations.isbnCheck;
 import static com.dbconnection.Dbconnection.dbconnection;
 import static com.modules.Emailcheck.isValidEmail;
@@ -75,6 +76,9 @@ public class AdminUi extends JFrame {
     private JButton checkButton;
     private JTable ReservationTable;
     private JButton viewAllReservationsButton;
+    private JTextField ReservationUserId;
+    private JTextField ReservationBookId;
+    private JButton addReservationButton;
 
     AdminUi() {
 
@@ -856,6 +860,42 @@ public class AdminUi extends JFrame {
                     }
                 } catch (SQLException ex) {
                     System.out.println(ex.getMessage());
+                }
+            }
+        });
+
+        addReservationButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                if(ReservationBookId.getText().isEmpty()||ReservationUserId.getText().isEmpty()){
+                    JOptionPane.showMessageDialog(frame,"Book ID or User ID Empty","Error",JOptionPane.ERROR_MESSAGE);
+                }else {
+
+                    if (!(new DbOperations().bookCheck(ReservationBookId.getText()))) {
+                        JOptionPane.showMessageDialog(frame, "Book Not Exists", "Error", JOptionPane.ERROR_MESSAGE);
+                    } else if (!(new DbOperations().userIdCheck(ReservationUserId.getText()))) {
+                        JOptionPane.showMessageDialog(frame, "User Id Not Exist", "Error", JOptionPane.ERROR_MESSAGE);
+                    } else if ((ReservationCheck(ReservationBookId.getText(), ReservationUserId.getText()))) {
+                        JOptionPane.showMessageDialog(frame, "Book Already Booked for this User", "Error", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        String sql = "INSERT INTO reservation (B_id,U_id) VALUES (?,?)";
+                        try {
+                            PreparedStatement ps = dbconnection().prepareStatement(sql);
+                            ps.setString(1, ReservationBookId.getText());
+                            ps.setString(2, ReservationUserId.getText());
+
+                            int affectedrow = ps.executeUpdate();
+                            if (affectedrow > 0) {
+                                JOptionPane.showMessageDialog(frame, "Reservation Complete", "Success", JOptionPane.INFORMATION_MESSAGE);
+                            } else {
+                                JOptionPane.showMessageDialog(frame, "Reservation Not Completed", "Error", JOptionPane.ERROR_MESSAGE);
+                            }
+
+                        } catch (SQLException ex) {
+                            System.out.println(ex.getMessage());
+                        }
+                    }
                 }
             }
         });

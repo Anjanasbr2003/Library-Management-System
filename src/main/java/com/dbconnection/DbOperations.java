@@ -154,6 +154,24 @@ public class DbOperations {
 
     }
 
+    public static boolean ReservationCheck(String bookid,String userid){
+        Connection co=dbconnection();
+
+        String sql = "SELECT B_id,U_id FROM reservation";
+        try {
+            PreparedStatement ps = co.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                if(rs.getString("B_id").equals(bookid) && rs.getString("U_id").equals(userid)){
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+
 
 
 }
