@@ -11,8 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static com.dbconnection.DbOperations.ReservationCheck;
-import static com.dbconnection.DbOperations.isbnCheck;
+import static com.dbconnection.DbOperations.*;
 import static com.dbconnection.Dbconnection.dbconnection;
 import static com.modules.Emailcheck.isValidEmail;
 
@@ -79,6 +78,11 @@ public class AdminUi extends JFrame {
     private JTextField ReservationUserId;
     private JTextField ReservationBookId;
     private JButton addReservationButton;
+    private JTabbedPane tabbedPane5;
+    private JTable FineTable;
+    private JButton seeFinesButton;
+    private JTextField DeleteReservationTextField;
+    private JButton DeleteReservationButton;
 
     AdminUi() {
 
@@ -897,6 +901,49 @@ public class AdminUi extends JFrame {
                         }
                     }
                 }
+            }
+        });
+        seeFinesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DefaultTableModel model = (DefaultTableModel) FineTable.getModel();
+                model.setRowCount(0);
+                model.setColumnIdentifiers(new Object[]{"Fine ID","Amount","Payment Status","Book ID","User ID"});
+
+                String sql = "Select * from fine";
+                try {
+                    PreparedStatement ps = dbconnection().prepareStatement(sql);
+                    ResultSet rs = ps.executeQuery();
+                    while (rs.next()) {
+                        model.addRow(new Object[]{rs.getString("F_id"),rs.getString("amount"),rs.getString("Payment_status"),rs.getString("B_id"),rs.getString("U_id")});
+                    }
+                } catch (SQLException ex) {
+                    System.out.println(ex.getMessage());
+                }
+            }
+        });
+        DeleteReservationButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                    if(DeleteReservationTextField.getText().isEmpty()){
+                        JOptionPane.showMessageDialog(frame,"Reservation ID is Empty","Error",JOptionPane.ERROR_MESSAGE);
+                    }else if(!(reservationIdCheck(DeleteReservationTextField.getText()))){
+                        JOptionPane.showMessageDialog(frame,"Reservation ID Not Exist","Error",JOptionPane.ERROR_MESSAGE);
+                    }else{
+                        String sql = "Delete from reservation WHERE R_id=?";
+                        try {
+                            PreparedStatement ps = dbconnection().prepareStatement(sql);
+                            ps.setString(1,DeleteReservationTextField.getText());
+                            int affectedrow = ps.executeUpdate();
+                            if (affectedrow > 0) {
+                                JOptionPane.showMessageDialog(frame, "Reservation Deleted Successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+                            }else{
+                                JOptionPane.showMessageDialog(frame, "Reservation Not Deleted", "Error", JOptionPane.ERROR_MESSAGE);
+                            }
+                        } catch (SQLException ex) {
+                            System.out.println(ex.getMessage());
+                        }
+                    }
             }
         });
     }
