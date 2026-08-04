@@ -83,6 +83,7 @@ public class AdminUi extends JFrame {
     private JButton seeFinesButton;
     private JTextField DeleteReservationTextField;
     private JButton DeleteReservationButton;
+    private JButton logOutButton;
 
     AdminUi() {
 
@@ -944,6 +945,13 @@ public class AdminUi extends JFrame {
                             System.out.println(ex.getMessage());
                         }
                     }
+            }
+        });
+        logOutButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new LoginUI();
+                frame.dispose();
             }
         });
     }

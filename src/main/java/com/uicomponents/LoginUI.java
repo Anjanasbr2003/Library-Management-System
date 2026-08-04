@@ -22,10 +22,11 @@ public class LoginUI extends JFrame {
 
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setSize(800,600);
         frame.setTitle("Login");
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
-        frame.setSize(800,600);
+
         frame.add(jpane);
 
         ImageIcon icon = new ImageIcon("src/main/resources/icon.png");
