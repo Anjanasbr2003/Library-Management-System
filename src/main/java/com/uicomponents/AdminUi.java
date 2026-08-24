@@ -964,9 +964,7 @@ public class AdminUi extends JFrame {
         this.adminId.setText(tempadminId);
     }
 
-    static void main(String[] args) {
-        new AdminUi();
-    }
+ 
 
 
 }

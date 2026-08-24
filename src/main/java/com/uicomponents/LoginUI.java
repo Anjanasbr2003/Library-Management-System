@@ -79,7 +79,7 @@ public class LoginUI extends JFrame {
                                 frame.dispose();
                                 break;
                             case "ME":
-                                new Userui();
+                                new Userui().setUserID(u1.getUserid());
                                 frame.dispose();
                                 break;
                         }
