@@ -19,6 +19,8 @@ public class Userui {
     private JPanel userUi;
     private JTable AllBooksTable;
     private JButton showAllBooksAvailableButton;
+    private JTable ReservationTable;
+    private JButton showMyReservationsButton;
 
     Userui() {
         JFrame frame = new JFrame();
@@ -59,6 +61,34 @@ public class Userui {
                 new LoginUI().setVisible(true);
             }
         });
+        showMyReservationsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DefaultTableModel modelreservation = (DefaultTableModel) ReservationTable.getModel();
+                modelreservation.setRowCount(0);
+                modelreservation.setColumnIdentifiers(new Object[]{"ID", "Book Name"});
+
+                String sql = "select reservation.B_id,book.B_name FROM reservation INNER JOIN users ON reservation.U_id=users.U_id INNER JOIN book ON book.B_id=reservation.B_id WHERE users.u_id=?";
+
+                try {
+                    PreparedStatement ps = Dbconnection.dbconnection().prepareStatement(sql);
+                    ps.setString(1, userID.getText());
+                    ResultSet rs = ps.executeQuery();
+
+                    boolean hasData = false;
+                    while (rs.next()) {
+                        hasData = true;
+                        modelreservation.addRow(new  Object[]{rs.getString("B_id"), rs.getString("B_name")});
+                    }
+                    if (!hasData) {
+                        JOptionPane.showMessageDialog(null, "No data found");
+                    }
+
+                } catch (SQLException ex) {
+                    System.out.println(ex.getMessage());
+                }
+            }
+        });
     }
 
     public void setUserID(String  userID) {
@@ -69,4 +99,3 @@ public class Userui {
         new Userui();
     }
 }
-//User Ge Reservations hadana thana nawaththuwe
