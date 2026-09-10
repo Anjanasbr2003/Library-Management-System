@@ -190,6 +190,23 @@ public class DbOperations {
         return false;
     }
 
+    public static boolean reservationBookIdCheck(String reservationBookId){
+        Connection co=dbconnection();
+        String sql = "SELECT B_id FROM reservation";
+        try {
+            PreparedStatement ps = co.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                if(rs.getString("B_id").equals(reservationBookId)){
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+
 
 
 }
