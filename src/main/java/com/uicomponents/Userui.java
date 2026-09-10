@@ -10,7 +10,8 @@ import java.awt.event.ActionListener;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+
+
 
 public class Userui {
 
@@ -25,6 +26,11 @@ public class Userui {
     private JButton showMyReservationsButton;
     private JTextField AddreservationTextField;
     private JButton AddReservationButton;
+    private JButton cancelReservationButton;
+
+    public void setUserID(String  userID) {
+        this.userID.setText(userID);
+    }
 
     Userui() {
         JFrame frame = new JFrame();
@@ -35,6 +41,8 @@ public class Userui {
         frame.setVisible(true);
         frame.setTitle("User UI");
         frame.add(userUi);
+
+
 
 
         showAllBooksAvailableButton.addActionListener(new ActionListener() {
@@ -56,13 +64,16 @@ public class Userui {
                 } catch (SQLException ex) {
                     System.out.println(ex.getMessage());
                 }
+
             }
+
         });
         logOutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 frame.dispose();
-                new LoginUI().setVisible(true);
+                new LoginUI();
+
             }
         });
         showMyReservationsButton.addActionListener(new ActionListener() {
@@ -127,11 +138,41 @@ public class Userui {
 
             }
         });
+        cancelReservationButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = ReservationTable.getSelectedRow();
+                if (selectedRow == -1) {
+                    JOptionPane.showMessageDialog(null, "Please Select a Reservation Record To Cansel");
+                }else{
+                    String selectedBookID = ReservationTable.getValueAt(selectedRow, 0).toString();
+
+                    String sql = "DELETE FROM reservation WHERE B_id=? AND U_id=?";
+
+                    try {
+                        PreparedStatement ps = Dbconnection.dbconnection().prepareStatement(sql);
+                        ps.setString(1, selectedBookID);
+                        ps.setString(2, userID.getText());
+                        int affectedrows =  ps.executeUpdate();
+                        if (affectedrows > 0) {
+                            JOptionPane.showMessageDialog(null, "Reservation Cancelled");
+                        }
+                        showMyReservationsButton.doClick();
+                    } catch (SQLException ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                }
+            }
+        });
+
+        showAllBooksAvailableButton.doClick();
+
+
+      //  showMyReservationsButton.doClick();
+
     }
 
-    public void setUserID(String  userID) {
-        this.userID.setText(userID);
-    }
+
 
     static void main(String[] args) {
         new Userui();

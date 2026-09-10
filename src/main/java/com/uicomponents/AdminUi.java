@@ -954,6 +954,10 @@ public class AdminUi extends JFrame {
                 frame.dispose();
             }
         });
+        showDataButton.doClick();
+        showButton.doClick();
+        viewAllReservationsButton.doClick();
+        seeFinesButton.doClick();
     }
 
 
