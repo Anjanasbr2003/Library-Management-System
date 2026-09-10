@@ -1,5 +1,6 @@
 package com.uicomponents;
 
+import com.dbconnection.DbOperations;
 import com.dbconnection.Dbconnection;
 
 import javax.swing.*;
@@ -9,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class Userui {
 
@@ -21,6 +23,8 @@ public class Userui {
     private JButton showAllBooksAvailableButton;
     private JTable ReservationTable;
     private JButton showMyReservationsButton;
+    private JTextField AddreservationTextField;
+    private JButton AddReservationButton;
 
     Userui() {
         JFrame frame = new JFrame();
@@ -87,6 +91,40 @@ public class Userui {
                 } catch (SQLException ex) {
                     System.out.println(ex.getMessage());
                 }
+            }
+        });
+        AddReservationButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!AddreservationTextField.getText().equals("")) {
+                    if(DbOperations.reservationBookIdCheck(AddreservationTextField.getText())) {
+                        JOptionPane.showMessageDialog(null, "Book already Reserved");
+                    }else if( !(new DbOperations().bookCheck(AddreservationTextField.getText()))){
+                        JOptionPane.showMessageDialog(null, "Enter A Existing Book ID This is Not in OUR library.");
+                    }
+
+                    else{
+                        String sql = "insert into reservation(B_id,U_id) values(?,?)";
+                        try {
+                            PreparedStatement ps = Dbconnection.dbconnection().prepareStatement(sql);
+                            ps.setString(1, AddreservationTextField.getText());
+                            ps.setString(2, userID.getText());
+                           int affectedrows =  ps.executeUpdate();
+                           if (affectedrows > 0) {
+                               JOptionPane.showMessageDialog(null, "Book Reserved");
+                           }
+
+                        } catch (Exception ex) {
+                            System.out.println(ex.getMessage());
+                        }
+
+                    }
+                }else{
+                    JOptionPane.showMessageDialog(null, "Please Enter the Book ID..........\nTo get The Book ID Go To All Books Section");
+                }
+
+
+
             }
         });
     }
