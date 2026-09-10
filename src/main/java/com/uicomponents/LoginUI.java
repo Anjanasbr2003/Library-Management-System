@@ -42,6 +42,8 @@ public class LoginUI extends JFrame {
         passwordlabel.setFont(new Font("Times New Roman",Font.BOLD,18));
         logInButton.setFont(new Font("Times New Roman",Font.BOLD,18));
 
+      frame.getRootPane().setDefaultButton(logInButton);
+
 
 
         jpane.setBackground(Color.white);
