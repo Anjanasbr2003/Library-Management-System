@@ -27,6 +27,8 @@ public class Userui {
     private JTextField AddreservationTextField;
     private JButton AddReservationButton;
     private JButton cancelReservationButton;
+    private JTable MyFInesTableUserUi;
+    private JButton ShowFinesButton;
 
     public void setUserID(String  userID) {
         this.userID.setText(userID);
@@ -170,11 +172,26 @@ public class Userui {
 
       //  showMyReservationsButton.doClick();
 
+        ShowFinesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DefaultTableModel model = (DefaultTableModel) MyFInesTableUserUi.getModel();
+                model.setRowCount(0);
+                model.setColumnIdentifiers(new Object[]{"Fine ID", "Book ID","Amount","Payment Status"});
+                String sql ="Select F_id,B_id,amount,payment_status from fine where U_id=?";
+
+                try {
+                    PreparedStatement ps = Dbconnection.dbconnection().prepareStatement(sql);
+                    ps.setString(1, userID.getText());
+                    ResultSet rs = ps.executeQuery();
+                    while (rs.next()) {
+                        model.addRow(new Object[]{rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4)});
+                    }
+                } catch (SQLException ex) {
+                    System.out.println(ex.getMessage());
+                }
+            }
+        });
     }
 
-
-
-    static void main(String[] args) {
-        new Userui();
-    }
 }
